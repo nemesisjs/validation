@@ -26,6 +26,8 @@ jobs:
       - name: Install dependencies
         run: |
           cd validation
+          sed -i 's/"@nemesisjs\/common": "workspace:\*"/"@nemesisjs\/common": "latest"/g' package.json
+          sed -i 's/"@nemesisjs\/core": "workspace:\*"/"@nemesisjs\/core": "latest"/g' package.json
           bun install --no-cache
 
       - name: Build Validation
