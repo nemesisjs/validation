@@ -1,0 +1,50 @@
+{
+  "name": "@nemesisjs/validation",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@nemesisjs/common": "workspace:*",
+    "@nemesisjs/core": "workspace:*",
+    "reflect-metadata": "^0.2.1"
+  },
+  "peerDependencies": {
+    "zod": "*",
+    "valibot": "*",
+    "class-validator": "*",
+    "class-transformer": "*"
+  },
+  "peerDependenciesMeta": {
+    "zod": {
+      "optional": true
+    },
+    "valibot": {
+      "optional": true
+    },
+    "class-validator": {
+      "optional": true
+    },
+    "class-transformer": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.0.0",
+    "zod": "^3.22.4",
+    "valibot": "^0.30.0",
+    "class-validator": "^0.14.0",
+    "class-transformer": "^0.5.1"
+  }
+}
