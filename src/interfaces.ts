@@ -15,8 +15,8 @@ export interface IValidationAdapter {
    * @returns The validated/transformed value or throws an HttpException
    */
   validate(
-    value: unknown,
-    targetType?: Type<unknown>,
+    value: any,
+    targetType?: Type<any>,
     schema?: any,
     paramType?: ParamType,
   ): Promise<any>;
@@ -30,7 +30,8 @@ export interface ValidationModuleOptions {
    * - 'valibot': Uses valibot schemas
    * - Type<IValidationAdapter>: A custom adapter class
    */
-  adapter?: 'class-validator' | 'zod' | 'valibot' | Type<IValidationAdapter>;
+    adapter?: 'class-validator' | 'zod' | 'valibot' | Type<IValidationAdapter>;
+    isGlobal?: boolean;
 }
 
 export const VALIDATION_OPTIONS = Symbol('VALIDATION_OPTIONS');

@@ -22,7 +22,7 @@ export class ValidationModule {
    *
    * @param options Configuration options for the validation module
    */
-  static forRoot(options: ValidationModuleOptions = {}): DynamicModule {
+  static forRoot(options: ValidationModuleOptions = {isGlobal :false}): DynamicModule {
     let AdapterClass: Type<IValidationAdapter>;
 
     if (typeof options.adapter === 'function') {
@@ -57,10 +57,10 @@ export class ValidationModule {
       providers: [
         optionsProvider,
         adapterProvider,
-        { provide: ValidationPipe, useClass: ValidationPipe as unknown as Type<unknown> }
+        { provide: ValidationPipe, useClass: ValidationPipe }
       ],
-      exports: [adapterProvider, ValidationPipe as unknown as Type<unknown>],
-      global: true, // Make the pipe and adapter available application-wide
+      exports: [adapterProvider, ValidationPipe],
+      global: options.isGlobal, 
     };
   }
 }
