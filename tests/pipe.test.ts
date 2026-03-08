@@ -53,14 +53,17 @@ describe('@nemesisjs/validation - ValidationPipe', () => {
       }
 
       const pipe = makePipe();
-      await expect(
-        pipe.transform({ age: 10 }, {
+      try {
+        await pipe.transform({ age: 10 }, {
           type: 'body',
           target: AgeController,
           methodKey: 'register',
           parameterIndex: 0,
-        }),
-      ).rejects.toMatchObject({ status: 400 });
+        });
+        expect(true).toBe(false); // should not reach here
+      } catch (err: any) {
+        expect(err.getStatus?.()).toBe(400);
+      }
     });
 
     it('should pass through when target/methodKey/parameterIndex are not provided', async () => {

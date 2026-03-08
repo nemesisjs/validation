@@ -60,7 +60,7 @@ export class ValidationModule {
         ValidationPipe,
       ],
       exports: [adapterProvider, ValidationPipe],
-      global: options.isGlobal ?? true,
+      global: options.isGlobal ?? false,
     };
   }
 

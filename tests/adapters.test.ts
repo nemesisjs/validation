@@ -14,6 +14,16 @@ const DEFAULT_OPTS: ValidationPipeOptions = {
   skipMissingProperties: true,
 };
 
+/** Helper: assert a promise rejects with status 400 */
+async function expectBadRequest(promise: Promise<unknown>): Promise<void> {
+  try {
+    await promise;
+    expect(true).toBe(false); // should not reach here
+  } catch (err: any) {
+    expect(err.getStatus?.()).toBe(400);
+  }
+}
+
 // ─── Zod Adapter ──────────────────────────────────────────────────────────────
 
 describe('@nemesisjs/validation - ZodValidationAdapter', () => {
@@ -32,11 +42,11 @@ describe('@nemesisjs/validation - ZodValidationAdapter', () => {
     expect(result).toEqual({ name: 'Alice', age: 30 });
   });
 
-  it('should throw BadRequestException for invalid input', async () => {
+  it('should throw BadRequestException (status 400) for invalid input', async () => {
     const schema = z.object({ email: z.string().email() });
-    await expect(
+    await expectBadRequest(
       adapter.validate({ email: 'not-an-email' }, DEFAULT_OPTS, undefined, schema),
-    ).rejects.toMatchObject({ status: 400 });
+    );
   });
 
   it('should include field errors in the exception response', async () => {
@@ -46,9 +56,9 @@ describe('@nemesisjs/validation - ZodValidationAdapter', () => {
     });
     try {
       await adapter.validate({ name: 'A', age: 10 }, DEFAULT_OPTS, undefined, schema);
-      expect(false).toBe(true); // should not reach here
+      expect(true).toBe(false); // should not reach here
     } catch (err: any) {
-      const body = JSON.parse(err.getResponse?.() ?? '{}');
+      const body = err.getResponse?.() ?? {};
       expect(body.errors).toBeDefined();
       expect(Array.isArray(body.errors)).toBe(true);
       expect(body.errors.length).toBeGreaterThanOrEqual(2);
@@ -118,17 +128,19 @@ describe('@nemesisjs/validation - ValibotValidationAdapter', () => {
     expect(result).toEqual({ name: 'Widget', price: 9.99 });
   });
 
-  it('should throw BadRequestException for invalid input', async () => {
+  it('should throw BadRequestException (status 400) for invalid input', async () => {
     const schema = v.object({ name: v.string(), price: v.number() });
-    await expect(
+    await expectBadRequest(
       adapter.validate({ name: 'Widget', price: 'not-a-number' }, DEFAULT_OPTS, undefined, schema),
-    ).rejects.toMatchObject({ status: 400 });
+    );
   });
 
   it('should include structured errors in the exception response', async () => {
-    const schema = v.object({ email: v.pipe(v.string(), v.email('Invalid email')) });
+    // Valibot v0.x uses array-of-validators syntax: v.string([v.email()])
+    const schema = v.object({ email: v.string([v.email('Invalid email')]) });
     try {
       await adapter.validate({ email: 'bad' }, DEFAULT_OPTS, undefined, schema);
+      expect(true).toBe(false); // should not reach here
     } catch (err: any) {
       const body = err.getResponse?.() ?? {};
       expect(body.errors).toBeDefined();
