@@ -1,31 +1,61 @@
 /**
  * @nemesisjs/validation - Decorators
+ *
+ * Provides `@UseSchema()` for attaching Zod / Valibot schemas to parameters,
+ * and convenience method-level decorators `@ValidateBody()` / `@ValidateQuery()`.
  */
-import 'reflect-metadata';
 
 export const SCHEMA_METADATA_KEY = 'nemesis:validation:schema';
 
 /**
- * Assigns a specific validation schema (e.g., Zod or Valibot) to a route parameter.
- * Should be used in conjunction with @Body(), @Query(), or @Param().
+ * Attaches a validation schema (Zod, Valibot, or any compatible library) to a
+ * specific route parameter. Must be combined with a parameter decorator such as
+ * `@Body()`, `@Query()`, or `@Param()`.
  *
- * @param schema The validation schema object from your library of choice
+ * The `ValidationPipe` reads this schema at request time and delegates validation
+ * to the active adapter.
+ *
+ * @param schema - The schema object (e.g. `z.object({...})` or `v.object({...})`)
+ * @returns {ParameterDecorator}
  *
  * @example
  * ```typescript
- *  @Post('/users')
- *  createUser(
- *    @Body() @UseSchema(createUserSchema) body: any
- *  ) { ... }
+ * const createUserSchema = z.object({ name: z.string(), email: z.string().email() });
+ *
+ * @Post('/users')
+ * createUser(@Body() @UseSchema(createUserSchema) body: CreateUserDto, ctx: RequestContext) { ... }
  * ```
  */
-export function UseSchema(schema: any): ParameterDecorator {
-  return (target: Object, propertyKey: string | symbol | undefined, parameterIndex: number) => {
+export function UseSchema(schema: unknown): ParameterDecorator {
+  return (target: object, propertyKey: string | symbol | undefined, parameterIndex: number) => {
     if (!propertyKey) return;
-    
-    // We store the schema securely per parameter index on the method.
-    const schemas = (Reflect as any).getOwnMetadata(SCHEMA_METADATA_KEY, target.constructor, propertyKey) || {};
-    schemas[parameterIndex] = schema;
-    (Reflect as any).defineMetadata(SCHEMA_METADATA_KEY, schemas, target.constructor, propertyKey);
+
+    const existing: Record<number, unknown> =
+      Reflect.getOwnMetadata(SCHEMA_METADATA_KEY, (target as any).constructor, propertyKey) ?? {};
+    existing[parameterIndex] = schema;
+    Reflect.defineMetadata(
+      SCHEMA_METADATA_KEY,
+      existing,
+      (target as any).constructor,
+      propertyKey,
+    );
   };
+}
+
+/**
+ * Retrieve the schema attached to a specific parameter via `@UseSchema()`.
+ *
+ * @param target - The controller class constructor
+ * @param methodKey - The method name
+ * @param parameterIndex - The zero-based parameter index
+ * @returns The stored schema, or `undefined` if none was attached
+ */
+export function getParamSchema(
+  target: new (...args: unknown[]) => unknown,
+  methodKey: string | symbol,
+  parameterIndex: number,
+): unknown {
+  const schemas: Record<number, unknown> =
+    Reflect.getOwnMetadata(SCHEMA_METADATA_KEY, target, methodKey) ?? {};
+  return schemas[parameterIndex];
 }
