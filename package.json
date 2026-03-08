@@ -2,6 +2,15 @@
   "name": "@nemesisjs/validation",
   "version": "1.0.0",
   "type": "module",
+  "author": "NemesisJS",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nemesisjs/validation.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "exports": {
