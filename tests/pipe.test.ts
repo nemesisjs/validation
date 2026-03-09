@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'bun:test';
 import { z } from 'zod';
-import { Injectable, Controller, Body } from '@nemesisjs/common';
-import type { ArgumentMetadata, Type } from '@nemesisjs/common';
-import type { RequestContext } from '@nemesisjs/http';
+import { Injectable, Controller, Body } from '@nemesis-js/common';
+import type { ArgumentMetadata, Type } from '@nemesis-js/common';
+import type { RequestContext } from '@nemesis-js/http';
 import { ValidationPipe } from '../src/pipe/validation.pipe.js';
 import { UseSchema } from '../src/decorators.js';
 import { ZodValidationAdapter } from '../src/adapters/zod.adapter.js';
@@ -22,7 +22,7 @@ function makePipe(pipeOptions: ValidationPipeOptions = {}): ValidationPipe {
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
-describe('@nemesisjs/validation - ValidationPipe', () => {
+describe('@nemesis-js/validation - ValidationPipe', () => {
   describe('Schema resolution via @UseSchema', () => {
     it('should validate a body param against a @UseSchema schema', async () => {
       const schema = z.object({ name: z.string() });

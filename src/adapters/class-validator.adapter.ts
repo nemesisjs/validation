@@ -1,12 +1,12 @@
 /**
- * @nemesisjs/validation - ClassValidator Adapter
+ * @nemesis-js/validation - ClassValidator Adapter
  *
  * Validates DTO class instances using `class-validator` decorators.
  * Uses `class-transformer` to convert plain objects to class instances.
  */
 
-import { BadRequestException } from '@nemesisjs/common';
-import type { Type } from '@nemesisjs/common';
+import { BadRequestException } from '@nemesis-js/common';
+import type { Type } from '@nemesis-js/common';
 import type { IValidationAdapter, ValidationPipeOptions } from '../interfaces.js';
 
 /** Primitive types that should never be passed through class-validator */

@@ -1,11 +1,11 @@
 /**
- * @nemesisjs/validation - ValidationModule
+ * @nemesis-js/validation - ValidationModule
  *
  * Dynamic module that configures the validation adapter, registers the
  * `ValidationPipe`, and exports everything needed to validate request params.
  */
 
-import { Module, type DynamicModule, type Provider, type Type } from '@nemesisjs/common';
+import { Module, type DynamicModule, type Provider, type Type } from '@nemesis-js/common';
 import {
   type IValidationAdapter,
   type ValidationModuleOptions,

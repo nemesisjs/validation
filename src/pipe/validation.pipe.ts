@@ -1,11 +1,11 @@
 /**
- * @nemesisjs/validation - ValidationPipe
+ * @nemesis-js/validation - ValidationPipe
  *
  * A global pipe that intercepts every decorated parameter and runs it through
  * the active validation adapter (Zod, Valibot, or class-validator).
  */
 
-import { Injectable, Inject, type PipeTransform, type ArgumentMetadata } from '@nemesisjs/common';
+import { Injectable, Inject, type PipeTransform, type ArgumentMetadata } from '@nemesis-js/common';
 import {
   VALIDATION_ADAPTER,
   VALIDATION_OPTIONS,

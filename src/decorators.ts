@@ -1,5 +1,5 @@
 /**
- * @nemesisjs/validation - Decorators
+ * @nemesis-js/validation - Decorators
  *
  * Provides `@UseSchema()` for attaching Zod / Valibot schemas to parameters,
  * and convenience method-level decorators `@ValidateBody()` / `@ValidateQuery()`.

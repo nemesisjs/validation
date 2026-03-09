@@ -26,7 +26,7 @@ async function expectBadRequest(promise: Promise<unknown>): Promise<void> {
 
 // ─── Zod Adapter ──────────────────────────────────────────────────────────────
 
-describe('@nemesisjs/validation - ZodValidationAdapter', () => {
+describe('@nemesis-js/validation - ZodValidationAdapter', () => {
   const adapter = new ZodValidationAdapter();
 
   it('should pass through the value when no schema is provided', async () => {
@@ -108,7 +108,7 @@ describe('@nemesisjs/validation - ZodValidationAdapter', () => {
 
 // ─── Valibot Adapter ──────────────────────────────────────────────────────────
 
-describe('@nemesisjs/validation - ValibotValidationAdapter', () => {
+describe('@nemesis-js/validation - ValibotValidationAdapter', () => {
   const adapter = new ValibotValidationAdapter();
 
   it('should pass through the value when no schema is provided', async () => {
@@ -168,7 +168,7 @@ describe('@nemesisjs/validation - ValibotValidationAdapter', () => {
 
 // ─── ClassValidator Adapter ───────────────────────────────────────────────────
 
-describe('@nemesisjs/validation - ClassValidatorAdapter', () => {
+describe('@nemesis-js/validation - ClassValidatorAdapter', () => {
   const adapter = new ClassValidatorAdapter();
 
   it('should pass through when no targetType is given', async () => {

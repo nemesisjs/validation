@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'bun:test';
-import { Controller, Body, Param, Injectable } from '@nemesisjs/common';
-import type { RequestContext } from '@nemesisjs/http';
+import { Controller, Body, Param, Injectable } from '@nemesis-js/common';
+import type { RequestContext } from '@nemesis-js/http';
 import { UseSchema, getParamSchema, SCHEMA_METADATA_KEY } from '../src/decorators.js';
 
 // ─── Fixtures ─────────────────────────────────────────────────────────────────
@@ -10,7 +10,7 @@ const anotherSchema = { _brand: 'AnotherSchema', parse: () => {} };
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
-describe('@nemesisjs/validation - Decorators', () => {
+describe('@nemesis-js/validation - Decorators', () => {
   describe('@UseSchema', () => {
     it('should store a schema on a body parameter', () => {
       @Injectable()

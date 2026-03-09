@@ -1,11 +1,11 @@
 /**
- * @nemesisjs/validation - Valibot Adapter
+ * @nemesis-js/validation - Valibot Adapter
  *
  * Validates values using Valibot schemas attached via `@UseSchema()`.
  * Supports structured error reporting with field paths and messages.
  */
 
-import { BadRequestException } from '@nemesisjs/common';
+import { BadRequestException } from '@nemesis-js/common';
 import type { IValidationAdapter, ValidationPipeOptions } from '../interfaces.js';
 
 /** A formatted Valibot validation error entry */

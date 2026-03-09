@@ -6,7 +6,7 @@ import { ZodValidationAdapter } from '../src/adapters/zod.adapter.js';
 import { ValibotValidationAdapter } from '../src/adapters/valibot.adapter.js';
 import { ClassValidatorAdapter } from '../src/adapters/class-validator.adapter.js';
 
-describe('@nemesisjs/validation - ValidationModule', () => {
+describe('@nemesis-js/validation - ValidationModule', () => {
   describe('forRoot()', () => {
     it('should return a valid DynamicModule object', () => {
       const module = ValidationModule.forRoot({ adapter: 'zod' });

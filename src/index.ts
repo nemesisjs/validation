@@ -1,5 +1,5 @@
 /**
- * @nemesisjs/validation - Public API
+ * @nemesis-js/validation - Public API
  *
  * Validation library for NemesisJS supporting Zod, Valibot, and class-validator.
  */

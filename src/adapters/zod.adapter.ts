@@ -1,11 +1,11 @@
 /**
- * @nemesisjs/validation - Zod Adapter
+ * @nemesis-js/validation - Zod Adapter
  *
  * Validates values using Zod schemas attached via `@UseSchema()`.
  * Supports whitelist (strip), forbidNonWhitelisted, and structured error reporting.
  */
 
-import { BadRequestException } from '@nemesisjs/common';
+import { BadRequestException } from '@nemesis-js/common';
 import type { IValidationAdapter, ValidationPipeOptions } from '../interfaces.js';
 
 /** A formatted Zod validation error entry */

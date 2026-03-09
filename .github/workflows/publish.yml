@@ -1,22 +1,22 @@
 # ══════════════════════════════════════════════════════════════════════════════
-#  Publish: @nemesisjs/validation
+#  Publish: @nemesis-js/validation
 #
 #  What this does:
 #    1. Builds the package.
 #    2. Publishes to npm with public access.
 #
-#  Dependencies on other @nemesisjs/* packages are declared as real semver
+#  Dependencies on other @nemesis-js/* packages are declared as real semver
 #  ranges (e.g. "^0.1.0"), so no workspace rewriting is needed here.
 #  Publish the core monorepo packages first if you are doing a fresh release.
 #
 #  How to trigger:
-#    Actions tab → "Publish @nemesisjs/validation" → Run workflow
+#    Actions tab → "Publish @nemesis-js/validation" → Run workflow
 #
 #  Required secret:
 #    NPM_TOKEN  — a npm "Automation" token with publish rights
 # ══════════════════════════════════════════════════════════════════════════════
 
-name: Publish @nemesisjs/validation
+name: Publish @nemesis-js/validation
 
 # ── Trigger ───────────────────────────────────────────────────────────────────
 on:

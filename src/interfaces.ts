@@ -1,8 +1,8 @@
 /**
- * @nemesisjs/validation - Core Interfaces
+ * @nemesis-js/validation - Core Interfaces
  */
 
-import type { Type, ParamType } from '@nemesisjs/common';
+import type { Type, ParamType } from '@nemesis-js/common';
 
 // ─── Validation Adapter ───────────────────────────────────────────────────────
 
