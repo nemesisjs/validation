@@ -24,8 +24,8 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@nemesisjs/common": "workspace:*",
-    "@nemesisjs/core": "workspace:*",
+    "@nemesisjs/common": "^0.1.0",
+    "@nemesisjs/core": "^0.1.0",
     "reflect-metadata": "^0.2.1"
   },
   "peerDependencies": {
