@@ -1,40 +1,162 @@
-name: Publish Validation
+# ══════════════════════════════════════════════════════════════════════════════
+#  Publish: @nemesisjs/validation
+#
+#  What this does:
+#    1. Runs the validation test suite — publish is blocked if any test fails.
+#    2. Temporarily replaces "workspace:*" deps with "latest" so bun install
+#       can resolve them from npm (this repo is published standalone).
+#    3. Builds the package.
+#    4. Pins the workspace deps to "^<version>" before publishing, so the
+#       published package.json has a correct semver range (not "latest").
+#    5. Publishes to npm with public access.
+#
+#  How to trigger:
+#    Actions tab → "Publish @nemesisjs/validation" → Run workflow
+#
+#  Required secret:
+#    NPM_TOKEN  — a npm "Automation" token with publish rights
+# ══════════════════════════════════════════════════════════════════════════════
 
+name: Publish @nemesisjs/validation
+
+# ── Trigger ───────────────────────────────────────────────────────────────────
 on:
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run — build & test without publishing to npm"
+        required: false
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
 
+# ── Safety: never allow two publish runs at the same time ─────────────────────
+concurrency:
+  group: publish-validation
+  cancel-in-progress: false
+
+# ── Minimal GitHub token permissions ─────────────────────────────────────────
+permissions:
+  contents: read
+
+# ══════════════════════════════════════════════════════════════════════════════
 jobs:
-  publish:
-    runs-on: ubuntu-latest
-    if: github.repository_owner == github.actor
-    steps:
-      - uses: actions/checkout@v4
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
+  # ── 1 · Test ────────────────────────────────────────────────────────────────
+  #  The test step resolves workspace:* to "latest" so bun can install the
+  #  published @nemesisjs/* packages from npm, then runs the suite.
+  test:
+    name: Run test suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
 
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: "20.x"
-          registry-url: "https://registry.npmjs.org"
+      # workspace:* won't resolve outside the monorepo — swap to "latest" for CI.
+      - name: Resolve workspace dependencies from npm (use latest published versions)
+        run: |
+          node -e "
+            const fs  = require('fs');
+            const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+            for (const section of ['dependencies', 'devDependencies', 'peerDependencies']) {
+              for (const [name, val] of Object.entries(pkg[section] ?? {})) {
+                if (val === 'workspace:*') pkg[section][name] = 'latest';
+              }
+            }
+            fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
+          "
 
       - name: Install dependencies
-        run: |
-          sed -i 's/"@nemesisjs\/common": "workspace:\*"/"@nemesisjs\/common": "latest"/g' package.json
-          sed -i 's/"@nemesisjs\/core": "workspace:\*"/"@nemesisjs\/core": "latest"/g' package.json
-          bun install --no-cache
+        run: bun install --no-cache
 
-      - name: Build Validation
-        run: |
-          bun run build
+      - name: Run tests
+        run: bun test tests/
 
-      - name: Publish Validation
+  # ── 2 · Build & Publish ─────────────────────────────────────────────────────
+  #  Only runs after the test job passes.
+  publish:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+    needs: test
+    timeout-minutes: 10
+    environment: npm
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      # Node is required for `npm publish` even though we build with Bun.
+      - name: Set up Node (for npm publish)
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
+
+      # Install using "latest" so bun resolves deps from npm, not the workspace.
+      - name: Resolve workspace dependencies from npm (use latest published versions)
         run: |
-          VERSION=$(grep '"version"' package.json | head -n 1 | sed -E 's/.*"version": "(.*)",/\1/')
-          sed -i "s/\"workspace:\*\"/\"^${VERSION}\"/g" package.json
-          npm publish --access public || echo "Publishing failed (version may already exist)"
+          node -e "
+            const fs  = require('fs');
+            const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+            for (const section of ['dependencies', 'devDependencies', 'peerDependencies']) {
+              for (const [name, val] of Object.entries(pkg[section] ?? {})) {
+                if (val === 'workspace:*') pkg[section][name] = 'latest';
+              }
+            }
+            fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
+          "
+
+      - name: Install dependencies
+        run: bun install --no-cache
+
+      - name: Build
+        run: bun run build
+
+      # The published package.json should have "^version" ranges, not "latest",
+      # so consumers get a predictable dependency — pin them now before publish.
+      - name: Pin workspace dependencies to a real semver range for the published package
+        run: |
+          node -e "
+            const fs  = require('fs');
+            const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+            const ver = pkg.version;
+            for (const section of ['dependencies', 'devDependencies', 'peerDependencies']) {
+              for (const [name, val] of Object.entries(pkg[section] ?? {})) {
+                if (val === 'latest') pkg[section][name] = '^' + ver;
+              }
+            }
+            fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
+            console.log('Pinned workspace deps to ^' + ver);
+          "
+
+      - name: Publish to npm
+        run: |
+          PKG_NAME=$(node -p "require('./package.json').name")
+          PKG_VER=$(node  -p "require('./package.json').version")
+          DRY_RUN="${{ github.event.inputs.dry_run }}"
+
+          echo "  Package : $PKG_NAME"
+          echo "  Version : $PKG_VER"
+
+          if [ "$DRY_RUN" = "true" ]; then
+            echo "  Result  : skipped (dry run)"
+          else
+            npm publish --access public
+            echo "  Result  : ✓ published $PKG_NAME@$PKG_VER"
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
