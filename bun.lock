@@ -5,8 +5,8 @@
     "": {
       "name": "validation",
       "dependencies": {
-        "@nemesisjs/common": "link:../nemesisjs/packages/common",
-        "@nemesisjs/core": "link:../nemesisjs/packages/core",
+        "@nemesis-js/common": "^0.1.0",
+        "@nemesis-js/core": "^0.1.0",
         "reflect-metadata": "^0.2.1",
       },
       "devDependencies": {
@@ -32,9 +32,9 @@
     },
   },
   "packages": {
-    "@nemesisjs/common": ["@nemesisjs/common@link:../nemesisjs/packages/common", {}],
+    "@nemesis-js/common": ["@nemesis-js/common@0.1.0", "", { "dependencies": { "reflect-metadata": "^0.2.2" } }, "sha512-5Zc+xu4cNFtRikZI25E7VYO5iu2UIN+oVsi7lyJpR2e9Hjgx1BYlBp/qozwcsJ8TnAeCd5Ts8m7yL/u2kCt+Mw=="],
 
-    "@nemesisjs/core": ["@nemesisjs/core@link:../nemesisjs/packages/core", {}],
+    "@nemesis-js/core": ["@nemesis-js/core@0.1.0", "", { "dependencies": { "@nemesis-js/common": "^0.1.0" } }, "sha512-mLNkvFjNYLCLzBwuXLMM4Jh3Mm/vnEStYOx3cXC3QBEntfklmJRdnVk9haLEgLhCjKOkgvZ0QO1n/SGryymisA=="],
 
     "@types/bun": ["@types/bun@1.3.10", "", { "dependencies": { "bun-types": "1.3.10" } }, "sha512-0+rlrUrOrTSskibryHbvQkDOWRJwJZqZlxrUs1u4oOoTln8+WIXBPmAuCF35SWB2z4Zl3E84Nl/D0P7803nigQ=="],
 
